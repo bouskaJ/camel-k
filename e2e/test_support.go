@@ -87,7 +87,7 @@ func kamel(args ...string) *cobra.Command {
 	var c *cobra.Command
 	var err error
 
-	kamelArgs := os.Getenv("KAMEL_ARGS")
+	kamelArgs := os.Getenv(args[0])
 	kamelDefaultArgs := strings.Fields(kamelArgs)
 	args = append(kamelDefaultArgs, args...)
 
