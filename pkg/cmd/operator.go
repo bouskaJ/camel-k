@@ -18,6 +18,7 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"github.com/apache/camel-k/pkg/cmd/operator"
 	"github.com/spf13/cobra"
 )
@@ -29,7 +30,7 @@ func newCmdOperator() *cobra.Command {
 		Long:   `Run the Camel K operator`,
 		Hidden: true,
 		Run: func(cmd *cobra.Command, args []string) {
-			operator.Run()
+			operator.Run(context.TODO())
 		},
 	}
 

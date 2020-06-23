@@ -37,15 +37,13 @@ import (
 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/record"
 
+	"github.com/apache/camel-k/pkg/apis"
+	"github.com/apache/camel-k/pkg/controller"
+	"github.com/apache/camel-k/pkg/util/defaults"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
-	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
-
-	"github.com/apache/camel-k/pkg/apis"
-	"github.com/apache/camel-k/pkg/controller"
-	"github.com/apache/camel-k/pkg/util/defaults"
 )
 
 var log = logf.Log.WithName("cmd")
@@ -65,7 +63,7 @@ func printVersion() {
 }
 
 // Run starts the Camel K operator
-func Run() {
+func Run(ctx context.Context) {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	flag.Parse()
@@ -94,7 +92,7 @@ func Run() {
 	}
 
 	// Become the leader before proceeding
-	err = leader.Become(context.TODO(), "camel-k-lock")
+	err = leader.Become(ctx, "camel-k-lock")
 	if err != nil {
 		log.Error(err, "")
 		os.Exit(1)
@@ -147,7 +145,7 @@ func Run() {
 	}
 
 	// Try to register the OpenShift CLI Download link if possible
-	installCtx, installCancel := context.WithTimeout(context.TODO(), 1*time.Minute)
+	installCtx, installCancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer installCancel()
 	install.OperatorStartupOptionalTools(installCtx, c, log)
 
@@ -160,7 +158,7 @@ func Run() {
 	log.Info("Starting the Cmd.")
 
 	// Start the Cmd
-	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
+	if err := mgr.Start(ctx.Done()); err != nil {
 		log.Error(err, "manager exited non-zero")
 		os.Exit(1)
 	}

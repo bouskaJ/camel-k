@@ -25,6 +25,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/apache/camel-k/pkg/cmd/operator"
 	"io"
 	"io/ioutil"
 	"os"
@@ -935,6 +936,20 @@ func NumPods(ns string) func() int {
 
 func WithNewTestNamespace(t *testing.T, doRun func(string)) {
 	ns := NewTestNamespace(false)
+
+	os.Setenv( "KUBERNETES_CONFIG","/home/jbouska/.kube/config")
+	os.Setenv( "OPERATOR_NAME","camel-k")
+	os.Setenv( "WATCH_NAMESPACE",ns.GetName())
+
+	ctx, cancel := context.WithCancel(TestContext)
+
+	go operator.Run(ctx)
+	defer func() {
+		cancel()
+		time.Sleep(300 * time.Millisecond)
+	}()
+
+
 	defer DeleteTestNamespace(t, ns)
 	defer UserCleanup()
 
@@ -943,6 +958,18 @@ func WithNewTestNamespace(t *testing.T, doRun func(string)) {
 
 func WithNewTestNamespaceWithKnativeBroker(t *testing.T, doRun func(string)) {
 	ns := NewTestNamespace(true)
+
+	os.Setenv( "KUBERNETES_CONFIG","/home/jbouska/.kube/config")
+	os.Setenv( "OPERATOR_NAME","camel-k")
+	os.Setenv( "WATCH_NAMESPACE",ns.GetName())
+	ctx, cancel := context.WithCancel(TestContext)
+
+	go operator.Run(ctx)
+	defer func() {
+		cancel()
+		time.Sleep(300 * time.Millisecond)
+	}()
+
 	defer DeleteTestNamespace(t, ns)
 	defer DeleteKnativeBroker(ns)
 	defer UserCleanup()
