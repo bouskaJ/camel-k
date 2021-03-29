@@ -178,5 +178,4 @@ jobs:
         oc login -u developer
 
         # Then run integration tests
-        make test-integration
-        make test-builder
+      ✗ go test -timeout 50m -v -tags=integration ./e2e/common/cli/debug_test.go
