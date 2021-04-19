@@ -133,9 +133,9 @@ jobs:
         kind: ClusterServiceVersion
         metadata:
           namespace: placeholder
-          name: camel-k.v$(make get-last-released-version)
-          annotations:
-            olm.skipRange: ">=1.0.0 <${RELEASE_VERSION}"
+          name: camel-k-operator.version-placeholder
+        spec:
+          replaces: camel-k-operator.v$(make get-last-released-version)
         EOF
 
         echo "Patching CSV with"
@@ -146,6 +146,8 @@ jobs:
         echo "LOCAL_IMAGE_BUNDLE=${LOCAL_IMAGE_BUNDLE}" >> $GITHUB_ENV
         make bundle-build METADATA_IMAGE_NAME=${LOCAL_IMAGE_BUNDLE} BUNDLE_METADATA_OPTS="--channels stable"
         docker push ${LOCAL_IMAGE_BUNDLE}
+        echo "New bundle created with CSV:"
+        cat bundle/manifests/camel-k.clusterserviceversion.yaml
     - name: Create new index image
       run: |
         export LOCAL_IIB=$KIND_REGISTRY/apache/camel-k-iib:$(make get-version)

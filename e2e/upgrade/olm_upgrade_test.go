@@ -91,7 +91,7 @@ func TestOLMAutomaticUpgrade(t *testing.T) {
 			// previous CSV is REPLACING
 			Eventually(CKClusterServiceVersionPhase(func(csv v1alpha1.ClusterServiceVersion) bool {
 				return csv.Spec.Version.Version.String() == prevCSVVersion.Version.String()
-			}, ns), TestTimeoutMedium).Should(Equal(v1alpha1.CSVPhaseReplacing))
+			}, ns), TestTimeoutLong).Should(Equal(v1alpha1.CSVPhaseReplacing))
 
 			// the new version is installed
 			Eventually(CKClusterServiceVersionPhase(func(csv v1alpha1.ClusterServiceVersion) bool {
