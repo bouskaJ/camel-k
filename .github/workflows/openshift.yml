@@ -93,4 +93,5 @@ jobs:
       run: |
         # Then run integration tests
         make test-integration
-        make test-builder
+        # make test-builder
+        # go test -timeout 60m -v ./e2e/common/cli/debug_test.go -tags=integration
