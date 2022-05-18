@@ -23,6 +23,8 @@ limitations under the License.
 package traits
 
 import (
+	"github.com/apache/camel-k/pkg/util/openshift"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -34,7 +36,15 @@ import (
 
 func TestServiceTrait(t *testing.T) {
 	WithNewTestNamespace(t, func(ns string) {
-		Expect(Kamel("install", "-n", ns).Execute()).To(Succeed())
+		var profile string
+		ocp, err := openshift.IsOpenShift(TestClient())
+		assert.Nil(t, err)
+		if ocp {
+			profile = "OpenShift"
+		} else {
+			profile = "Kubernetes"
+		}
+		Expect(Kamel("install", "-n", ns, "--trait-profile", profile).Execute()).To(Succeed())
 
 		t.Run("Default service (ClusterIP)", func(t *testing.T) {
 			// Service trait is enabled by default
