@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"regexp"
 	"testing"
 	"time"
 
@@ -71,8 +72,16 @@ func TestMetrics(t *testing.T) {
 		pod := OperatorPod(ns)()
 		Expect(pod).NotTo(BeNil())
 
+
 		// pod.Namespace could be different from ns if using global operator
 		logs := StructuredLogs(pod.Namespace, pod.Name, corev1.PodLogOptions{}, false)
+
+
+		r := regexp.MustCompile(`Reconciling IntegrationPlatform`)
+		matches := r.FindAllString(fmt.Sprintf("%s", logs), -1)
+
+		t.Logf("operator log %s", logs)
+		t.Logf("operator log matches %s", matches)
 		Expect(logs).NotTo(BeEmpty())
 
 		response, err := TestClient().CoreV1().RESTClient().Get().
@@ -254,6 +263,10 @@ func TestMetrics(t *testing.T) {
 			if platformErrored != nil {
 				platformErroredCount = *platformErrored.Histogram.SampleCount
 			}
+
+
+			t.Logf("platform count %d", platformReconciliations)
+			t.Logf("platformReconciledCount+platformRequeuedCount+platformErroredCount %d", platformReconciledCount+platformRequeuedCount+platformErroredCount)
 
 			Expect(platformReconciliations).To(BeNumerically("==", platformReconciledCount+platformRequeuedCount+platformErroredCount))
 
