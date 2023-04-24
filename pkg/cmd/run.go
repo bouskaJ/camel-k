@@ -228,7 +228,18 @@ func (o *runCmdOptions) decode(cmd *cobra.Command, args []string) error {
 				rfield := rdata.FieldByName(f.Name)
 				ifield := idata.FieldByName(f.Name)
 
-				ifield.Set(rfield)
+				// slice option format - merge both configurations
+				if rfield.Kind() == reflect.Slice {
+					rslice, _ := rfield.Interface().([]string)
+					islice, _ := ifield.Interface().([]string)
+					for _, k := range rslice {
+						util.StringSliceUniqueAdd(&islice, k)
+					}
+					ifield.Set(reflect.ValueOf(islice))
+
+				} else {
+					ifield.Set(rfield)
+				}
 			}
 		})
 	}
