@@ -330,11 +330,16 @@ func KamelWithContext(ctx context.Context, args ...string) *cobra.Command {
 			DisableFlagParsing: true,
 			RunE: func(cmd *cobra.Command, args []string) error {
 				externalBin := exec.CommandContext(ctx, kamelBin, args...)
-				var stdout io.Reader
+				var stdout, stderr io.Reader
 				stdout, err = externalBin.StdoutPipe()
 				if err != nil {
 					failTest(err)
 				}
+				stderr, err = externalBin.StderrPipe()
+				if err != nil {
+					failTest(err)
+				}
+
 				err := externalBin.Start()
 				if err != nil {
 					return err
@@ -343,6 +348,12 @@ func KamelWithContext(ctx context.Context, args ...string) *cobra.Command {
 				if err != nil {
 					return err
 				}
+
+				_, err = io.Copy(c.ErrOrStderr(), stderr)
+				if err != nil {
+					return err
+				}
+
 				err = externalBin.Wait()
 				if err != nil {
 					return err
