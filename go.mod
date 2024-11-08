@@ -45,7 +45,7 @@ require (
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/multierr v1.9.0
 	go.uber.org/zap v1.24.0
-	golang.org/x/oauth2 v0.7.0
+	golang.org/x/oauth2 v0.24.0
 	golang.org/x/sync v0.1.0
 	golang.org/x/term v0.7.0
 	golang.org/x/text v0.9.0
@@ -68,8 +68,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.14.0 // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20200907061046-05415f1de66d // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.0 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
@@ -156,7 +155,6 @@ require (
 	golang.org/x/tools v0.7.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
 	google.golang.org/api v0.107.0 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20221227171554-f9683d7f8bef // indirect
 	google.golang.org/grpc v1.52.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
